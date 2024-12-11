@@ -1,0 +1,4 @@
+- name: Install ntpdate
+  ansible.builtin.package:
+    name: moon-buggy
+    state: prese
