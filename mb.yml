@@ -1,0 +1,15 @@
+---
+- name: Telepíts csomagot és konfigurálj
+  hosts: all
+  become: true  # sudo jogosultságok a play szinten
+  tasks:
+    - name: Csomaglista frissítése
+      ansible.builtin.apt:
+        update_cache: yes
+        cache_valid_time: 3600  # Cache érvényességi ideje 1 óra
+      when: ansible_os_family == "Debian"
+
+    - name: Telepíts moon-buggy csomagot
+      ansible.builtin.package:
+        name: moon-buggy
+        state: present
