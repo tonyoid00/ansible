@@ -1,4 +1,8 @@
-- name: Install ntpdate
-  ansible.builtin.package:
-    name: moon-buggy
-    state: prese
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Install moon-buggy
+      ansible.builtin.package:
+        name: moon-buggy
+        state: present
