@@ -7,7 +7,7 @@
   apt: upgrade=dist state=latest
 
 - name: Installing packages
-  apt: name='aptitude,fail2ban,mc,ntp,git,etckeeper,screen,vim,bash-completion,open-vm-tools' state=latest
+  apt: name='aptitude,mc,ntp,git,screen,vim,bash-completion' state=latest
 
 - name: Remove LXC and related packages
   apt: name='liblxc1,lxc,dnsmasq,lxcfs,lxc-templates' state=absent purge=yes
