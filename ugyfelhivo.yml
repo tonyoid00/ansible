@@ -7,7 +7,7 @@
     roles:
       #- {role: swapfile, swapfile_size: 1GB, tags: [swapfile] }
       - {role: bootstrap, tags: bootstrap}
-      #- {role: users-groups, tags: users}
+      - {role: users-groups, tags: users}
       #- {role: sudoers, tags: sudoers}
       #- {role: ssh, tags: ssh}
       #- {role: hosts, tags: hosts}
