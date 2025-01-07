@@ -27,6 +27,10 @@
   command: timedatectl set-timezone "Europe/Budapest"
   when: current_zone.stdout != "Europe/Budapest"
 
-- name: check wireguard
-  service: name=wg-quick@wg0 state=running enabled=yes
+- name: Check wireguard
+  service:
+    name: wg-quick@wg0
+    state: started
+    enabled: yes
+    
   
