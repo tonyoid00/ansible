@@ -16,15 +16,15 @@
   replace: path=/etc/hostname regexp='^(.+)$' replace="{{ internal_hostname }}.{{ domain }}"
 
 - name: Set hostname
-  hostname: name="{{ internal_hostname }}.{{ domain }}"
+  hostname: name="ugyfelhivo1.sensomedia.hu"
 
 - name: check current timezone
   shell: cat /etc/timezone
   register: current_zone
   changed_when: false
 
-- name: Set timezone to "{{ timezone }}"
-  command: timedatectl set-timezone "{{ timezone }}"
+- name: Set timezone to "Europe/Budapest"
+  command: timedatectl set-timezone "Europe/Budapest"
   when: current_zone.stdout != timezone
 
 - name: Stop and disable multipathd services
