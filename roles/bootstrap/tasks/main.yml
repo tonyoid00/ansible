@@ -4,7 +4,7 @@
 
 - name: Set hostname
   hostname:
-    name: "{{ name }}.sensomedia.hu"
+    name: "{{ hostname }}.sensomedia.hu"
 
 - name: check current timezone
   shell: cat /etc/timezone
