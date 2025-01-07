@@ -3,7 +3,8 @@
   replace: path=/etc/hostname regexp='^(.+)$' replace="ugyfelhivo1.sensomedia.hu"
 
 - name: Set hostname
-  hostname: name="ugyfelhivo1.sensomedia.hu"
+  hostname:
+    name: "{{ name }}.sensomedia.hu"
 
 - name: check current timezone
   shell: cat /etc/timezone
