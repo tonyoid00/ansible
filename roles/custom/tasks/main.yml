@@ -1,4 +1,12 @@
 ---
+- name: Ensure destination directory exists
+  file:
+    path: /etc/systemd/system/getty@tty1.service.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+    
 - name: Create override.conf for auto-login
   copy:
     dest: /etc/systemd/system/getty@tty1.service.d/override.conf
