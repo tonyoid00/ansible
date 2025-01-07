@@ -9,7 +9,7 @@
 - name: Installing packages
   apt: name='aptitude,mc,ntp,git,screen,vim,bash-completion' state=latest
 
-- name: Remove LXC and related packages
+- name: Remove shitz and more
   apt: name='liblxc1,lxc,dnsmasq,lxcfs,lxc-templates' state=absent purge=yes
 
 - name: Replace /etc/hostname file
@@ -27,9 +27,6 @@
   command: timedatectl set-timezone "Europe/Budapest"
   when: current_zone.stdout != "Europe/Budapest"
 
-- name: Stop and disable multipathd services
-  service: name={{ item }} state=stopped enabled=no
-  with_items:
-    - multipathd.socket
-    - multipathd.service
-  when: ansible_distribution_major_version == '20'
+- name: check wireguard
+  service: name=wg-quick@wg0 state=running enabled=yes
+  
