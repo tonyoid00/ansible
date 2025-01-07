@@ -23,9 +23,9 @@
   register: current_zone
   changed_when: false
 
-- name: Set timezone to "Europe/Budapest"
-  command: timedatectl set-timezone "Europe/Budapest"
-  when: current_zone.stdout != "Europe/Budapest"
+- name: Set timezone to local
+  command: timedatectl set-timezone "{{ timezone }}"
+  when: current_zone.stdout != timezone
 
 - name: Check wireguard
   service:
