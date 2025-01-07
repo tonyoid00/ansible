@@ -1,21 +1,8 @@
 ---
 - name: Configure Raspberry Pi for auto-login and Chromium kiosk mode
-  hosts: ugyfelhivo1
-  become: yes
   vars:
     autologin_user: "senso"  # Replace with your target username
-
-  tasks:
-    - name: Ensure Chromium and Xorg are installed
-      apt:
-        name:
-          - chromium-browser
-          - xorg
-          - xserver-xorg
-        state: present
-        update_cache: yes
-
-    - name: Create override.conf for auto-login
+  - name: Create override.conf for auto-login
       copy:
         dest: /etc/systemd/system/getty@tty1.service.d/override.conf
         content: |
