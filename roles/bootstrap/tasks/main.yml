@@ -25,7 +25,7 @@
 
 - name: Set timezone to "Europe/Budapest"
   command: timedatectl set-timezone "Europe/Budapest"
-  when: current_zone.stdout != Europe/Budapest
+  when: current_zone.stdout != "Europe/Budapest"
 
 - name: Stop and disable multipathd services
   service: name={{ item }} state=stopped enabled=no
