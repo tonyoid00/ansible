@@ -14,6 +14,6 @@
       #- {role: iptables, tags: iptables}
       #- {role: openfiles, tags: openfiles}
       #- {role: network-tuning, tags: network}
-      #- {role: custom, tags: custom}
+      - {role: custom, tags: custom}
       #- {role: check-mk-agent, tags: check-mk}
 
