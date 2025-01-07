@@ -1,0 +1,38 @@
+---
+
+#- name: get service facts
+#  ansible.builtin.service_facts:
+
+#- debug: var=ansible_facts.services["firewalld.service"].state
+
+#- name: 
+#  set_fact:
+#     fwd: "{{ ansible_facts.services['firewalld.service'].state }}"
+
+#- name: check if firewalld is runnig
+#  fail:
+#    msg: FirewallD is not running 
+#  when: ansible_facts.services["firewalld.service"].state is "stopped"
+
+#- name: check fwd
+#  debug: var=fwd
+#  when: fwd != "running"
+#
+#- name: Config needed ports in firewalld
+#  firewalld: zone=public port={{sshport}}/tcp permanent=true state=enabled
+#  when: fwd == "running" and sshport is defined and sshport != 22
+#  notify: restart firewalld
+
+- name: Add new ssh port to fail2ban
+  template: src=fail2ban.j2 dest=/etc/fail2ban/jail.d/customization.local owner=root group=root mode=0644
+  when: sshport is defined and sshport != 22
+  notify: restart fail2ban
+
+- name: Change default ssh port in sshd_config
+  lineinfile: dest=/etc/ssh/sshd_config regexp="^Port {{sshport}}" line="Port {{sshport}}" state=present
+  when: sshport is defined and sshport != 22
+  notify: restart sshd
+
+- name: Limit SSH access to {{devgroup}} group
+  lineinfile: dest=/etc/ssh/sshd_config regexp="^AllowGroups" line="AllowGroups ztsadmin {{devgroup}}" state=present
+  notify: restart sshd

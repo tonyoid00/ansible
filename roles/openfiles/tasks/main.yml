@@ -1,0 +1,5 @@
+---
+
+- name: Set higher open files limits
+  copy: src=limits.conf dest=/etc/security/limits.d/limits.conf owner=root group=root mode=644
+

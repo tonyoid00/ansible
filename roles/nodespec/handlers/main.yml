@@ -1,0 +1,22 @@
+---
+
+- name: restart apache
+  service: name=apache2 state=restarted
+
+- name: restart mysql
+  service: name=mysql state=restarted
+
+- name: restart apparmor
+  service: name=apparmor state=restarted
+
+- name: restart ssh
+  service: name=ssh state=restarted
+
+- name: restart elasticsearch
+  service: name=elasticsearch state=restarted
+
+- name: restart php7.0-fpm
+  service: name=php7.0-fpm state=restarted
+
+- name: restart php7.2-fpm
+  service: name=php7.2-fpm state=restarted

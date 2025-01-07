@@ -1,0 +1,43 @@
+<VirtualHost *:80>
+    ServerAdmin webmaster@vg.hu
+    ServerName www.vg.hu
+    ServerAlias print.vg.hu
+    DocumentRoot /data/www/vg.hu/htdocs
+    <Directory "/data/www/vg.hu/htdocs">
+        AllowOverride All
+        #Require all granted
+
+        AuthType Basic
+        AuthName "Password Protected"
+        AuthUserFile /data/www/vg.hu/htpasswd
+        Require valid-user
+        Require ip 188.142.190
+        Require ip 77.111.104.106
+        Require ip 79.120.183
+
+        #RewriteCond %{HTTP_COOKIE} !{{szikrit_cookie}}={{szikrit_cookie_value}} [NC]
+        #RewriteCond %{REQUEST_URI} ^/wp-login\.php(.*)$ 
+        #RewriteRule ^(.*)$ - [R=404,L]
+    </Directory>
+
+    #<FilesMatch ".(eot|ttf|otf|woff)">
+    #    Header set Access-Control-Allow-Origin "*"
+    #</FilesMatch>
+
+    <Files ~ "composer.json">
+        Require all denied
+    </Files>
+
+    <Files ~ "\.(htaccess|git|bak|conf|dist|fla|in[ci]|log|psd|sh|sql|sw[op])">
+        Require all denied
+    </Files>
+
+    <Files ~ "/wp-content/uploads*\.php$">
+        Require all denied
+    </Files>
+
+    LogFormat "%{X-Forwarded-For}i - %{Host}i - %h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" vhostlog
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log vhostlog env=!nolog
+
+</VirtualHost>

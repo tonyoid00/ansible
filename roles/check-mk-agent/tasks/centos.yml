@@ -1,0 +1,24 @@
+---
+
+
+- name: Install check-mk agent
+  yum: name=https://monitor.zerotimeservices.com/zts/check_mk/agents/check-mk-agent-{{ omd_version }}-1.noarch.rpm state=present
+
+#- name: check if firewalld is running
+#  command: firewall-cmd --state
+#  register: fwd
+#  changed_when: false
+#
+#- name: Add monitor zone to firewalld
+#  firewalld: zone=trusted permanent=true state=enabled
+#  when: fwd and fwd.stdout == "running"
+#  notify: restart firewalld
+#
+#- name: Add monitor IP and check-mk port to monitor zone in firewalld
+#  firewalld: zone=trusted permanent=true source={{ item }} port=6556/tcp state=enabled
+#  when: fwd and fwd.stdout == "running"
+#  with_items:
+#    - 77.111.97.125/32
+#    - 77.111.95.165/32
+#  notify: restart firewalld
+

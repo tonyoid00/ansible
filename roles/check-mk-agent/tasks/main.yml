@@ -1,0 +1,60 @@
+---
+
+- name: Add a host in Checkmk
+  uri:
+    url: "https://{{ checkmk_server }}/{{ site_id }}/check_mk/api/1.0/domain-types/host_config/collections/all"
+    method: POST
+    headers:
+      Authorization: "Bearer {{ checkmk_api_user }} {{ checkmk_api_secret }}"
+      Content-Type: "application/json"
+      Accept: "application/json"
+    body: |
+      {
+        "folder": "{{ folder_path }}",
+        "host_name": "{{ project }}_{{ internal_hostname }}",
+        "attributes": {
+          "ipaddress": "{{ ansible_host }}",
+          "tag_customer_vps": "customer_{{ project }}"
+        }
+      }
+    body_format: json
+    status_code: 200
+
+- name: Service discovery of host in Checkmk
+  uri:
+    url: "https://{{ checkmk_server }}/{{ site_id }}/check_mk/api/1.0/domain-types/service_discovery_run/actions/start/invoke"
+    method: POST
+    headers:
+      Authorization: "Bearer {{ checkmk_api_user }} {{ checkmk_api_secret }}"
+      Content-Type: "application/json"
+      Accept: "application/json"
+    body: |
+      {
+        "host_name": "{{ project }}_{{ internal_hostname }}",
+        "mode": "refresh"
+      }
+    body_format: json
+    status_code: 302
+
+
+
+#- name: Activate changes in Checkmk
+#  uri:
+#    url: "http://{{ checkmk_server }}/{{ site_id }}/check_mk/api/1.0/domain-types/activation_run/actions/activate-changes/invoke"
+#    method: POST
+#    headers:
+#      Authorization: "Bearer {{ checkmk_api_user }} {{ checkmk_api_secret }}"
+#      Content-Type: "application/json"
+#    body: |
+#      {
+#        "redirect": true
+#      }
+#    body_format: json
+#    status_code: 200
+
+#- include_tasks: debian.yml
+#  when: ansible_os_family == "Debian"
+#
+#- include_tasks: centos.yml
+#  when: ansible_os_family == "RedHat"
+

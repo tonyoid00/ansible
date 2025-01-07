@@ -1,0 +1,13 @@
+---
+
+- name: restart ssh
+  command: service ssh restart
+
+- name: restart sshd
+  service: name=sshd state=restarted
+
+- name: restart fail2ban
+  service: name=fail2ban state=restarted
+
+- name: restart firewalld
+  service: name=firewalld state=restarted

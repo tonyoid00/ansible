@@ -1,0 +1,41 @@
+---
+
+- name: Set hostname
+  hostname: name="{{internal_hostname}}.{{domain}}"
+
+- name: Yum ugrade
+  yum: name=* update_cache=yes state=latest
+
+- name: Enable epel repo
+  yum: name=epel-release state=latest
+
+- name: Installing packages
+  yum: name='fail2ban,mc,ntp,git,etckeeper,python-pycurl,screen,bash-completion,vim,policycoreutils-python,open-vm-tools,deltarpm,unzip' state=latest
+
+- name: set /etc/localtime to {{ timezone }}
+  file: src=/usr/share/zoneinfo/{{ timezone }} dest=/etc/localtime state=link force=yes
+
+- name: get service facts
+  ansible.builtin.service_facts:
+
+- name:
+  set_fact:
+     fwd: "{{ ansible_facts.services['firewalld.service'].state }}"
+
+- name: check fwd
+  debug: var=fwd
+  when: fwd != "running"
+
+- name: Config ports in firewalld
+  firewalld: zone=public port={{item}}/tcp permanent=true state=enabled
+  when: fwd == "running"
+  with_items:
+    - 25
+  notify: restart firewalld
+
+#- name: Add monitor IP and check-mk port to monitor zone in firewalld
+#  firewalld: rich_rule="rule family=ipv4 source address={{ monitorip }} port port=6556 protocol=tcp accept" zone=public permanent=true state=enabled
+#  when: fwd == "running" and monitorip is defined
+#  notify: restart firewalld
+
+

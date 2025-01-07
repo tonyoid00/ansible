@@ -1,0 +1,80 @@
+---
+
+- name: users > Accounts
+  user:
+    name:       "{{ item.name }}"
+    password:   "{{ item.password|default(omit) }}"
+    group:      "{{ item.group|default(omit) }}"
+    groups:     "{{ item.groups|default([])|join(',') }}"
+    shell:      "{{ item.shell|default(omit) }}"
+    createhome: "{{ item.createhome|default(true)|bool }}"
+    system:     "{{ item.system|default(false)|bool }}"
+    uid:        "{{ item.uid|default(omit) }}"
+    comment:    "{{ item.comment|default(omit) }}"
+  with_items: '{{users}}'
+  no_log: false
+  when: item.dosync is defined and item.dosync
+
+- name: users > Authorized keys
+  authorized_key:
+    user:      "{{ item.0 }}"
+    key:       "{{ item.1 }}"
+    exclusive: true
+  with_together:
+    - "{{ users|selectattr('authorized_keys', 'sequence')|map(attribute='name')|list }}"
+    - "{{ users|selectattr('authorized_keys', 'sequence')|map(attribute='authorized_keys')|map('join', '\n')|list }}"
+    - "{{ users|selectattr('authorized_keys', 'sequence')|list }}"
+  #no_log: true
+  when: item.2.dosync is defined and item.2.dosync
+
+# Find the primary group of users whose group has not been manually defined
+- name: users > Find primary groups
+  command: "id -g -n {{ item.name }}"
+  with_items: '{{users}}'
+  when: item.group is not defined
+  register: __users
+  changed_when: false
+  no_log: false
+
+# Pair users with their found groups
+- name: users > Pair primary groups
+  set_fact:
+    # Waiting for the ansible 2 "combine" filter...
+    __item: "{% set __item = item.0.update(({}) if (item.1) else ({'group': item.1.stdout})) %}{{ item.0 }}"
+  with_together:
+    - '{{users}}'
+    - '{{__users.results}}'
+  register: __users
+  #no_log: true
+
+# Flatten results structure to the original variable
+- name: users > Flatten primary groups
+  set_fact:
+    users: "{{ __users.results|map(attribute='ansible_facts.__item')|list }}"
+  no_log: true
+
+- name: users > Keys private
+  copy:
+    dest:    "~{{ item.0.name }}/.ssh/{{ item.1.name }}"
+    content: "{{ item.1.private }}"
+    owner:   "{{ item.0.name }}"
+    group:   "{{ item.0.group|default(omit) }}"
+    mode:    0600
+  when: item.1.private is defined
+  with_subelements:
+    - "{{ users|selectattr('keys', 'sequence')|list }}"
+    - keys
+  no_log: true
+
+- name: users > Keys public
+  copy:
+    dest:    "~{{ item.0.name }}/.ssh/{{ item.1.name }}.pub"
+    content: "{{ item.1.public }}"
+    owner:   "{{ item.0.name }}"
+    group:   "{{ item.0.group|default(omit) }}"
+    mode:    0644
+  when: item.1.public is defined
+  with_subelements:
+    - "{{ users|selectattr('keys', 'sequence')|list }}"
+    - keys
+  no_log: true

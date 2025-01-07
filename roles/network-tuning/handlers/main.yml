@@ -1,0 +1,9 @@
+---
+
+- name: reload sysctl
+  command: /sbin/sysctl -p
+  when: ansible_os_family == "Debian"
+
+- name: reload sysctl
+  command: /usr/sbin/sysctl -p
+  when: ansible_os_family == "RedHat"

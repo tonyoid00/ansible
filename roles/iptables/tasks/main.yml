@@ -1,0 +1,17 @@
+---
+
+- name: installing firewall requirements
+  apt:
+    state: present
+    name:
+    - iptables-persistent
+    - netfilter-persistent
+
+- name: add default firewall rule - IPv4
+  template: src=iptables.v4.j2 dest=/etc/iptables/rules.v4 owner=root group=root mode=0644
+  notify: restart iptables
+
+- name: add default firewall rules - IPv6
+  template: src=iptables.v6.j2 dest=/etc/iptables/rules.v6 owner=root group=root mode=0644
+  notify: restart iptables
+
