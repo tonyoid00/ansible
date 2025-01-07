@@ -14,16 +14,15 @@
     content: |
       if [[ -z $DISPLAY ]] && [[ $(tty) == /dev/tty1 ]]; then
           startx
-      fi
-  owner: "{{ autologin_user }}"
-  group: "{{ autologin_user }}"
-  mode: "0644"
+    owner: "{{ autologin_user }}"
+    group: "{{ autologin_user }}"
+    mode: "0644"
 
 - name: Ensure .xinitrc exists
   copy:
     dest: /home/{{ autologin_user }}/.xinitrc
     content: |
       exec chromium-browser --kiosk --start-fullscreen --noerrdialogs --disable-infobars
-  owner: "{{ autologin_user }}"
-  group: "{{ autologin_user }}"
-  mode: "0755"
+    owner: "{{ autologin_user }}"
+    group: "{{ autologin_user }}"
+    mode: "0755"
