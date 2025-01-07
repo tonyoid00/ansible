@@ -1,8 +1,12 @@
 ---
 - name: Configure Raspberry Pi for auto-login and Chromium kiosk mode
+  hosts: raspberry_pi
+  become: yes
   vars:
     autologin_user: "senso"  # Replace with your target username
-  - name: Create override.conf for auto-login
+
+  tasks:
+    - name: Create override.conf for auto-login
       copy:
         dest: /etc/systemd/system/getty@tty1.service.d/override.conf
         content: |
@@ -34,3 +38,4 @@
   handlers:
     - name: reload_systemd
       command: systemctl daemon-reload
+
