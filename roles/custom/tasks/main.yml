@@ -16,14 +16,18 @@
       ExecStart=-/sbin/agetty --autologin senso --noclear %I $TERM
   notify: reload_systemd
 
-- name: Ensure .bash_profile exists
+- name: Ensure xorg conf exists
   copy:
-    dest: /home/senso/.bash_profile
+    dest: /etc/X11/xorg.conf.d/99-v3d.conf
     content: |
-      if [[ -z $DISPLAY ]] && [[ $(tty) == /dev/tty1 ]]; then
-          startx
-    owner: "senso"
-    group: "senso"
+      Section "OutputClass"
+          Identifier "vc4"
+          MatchDriver "vc4"
+          Driver "modesetting"
+          Option "PrimaryGPU" "true"
+      EndSection
+    owner: "root"
+    group: "root"
     mode: "0644"
 
 - name: Ensure xorg conf exists
