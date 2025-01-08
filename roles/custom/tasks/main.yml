@@ -50,8 +50,3 @@
     owner: "senso"
     group: "senso"
     mode: "0755"
-
-# Handlers blokk
-handlers:
-  - name: reload_systemd
-    command: systemctl daemon-reload
