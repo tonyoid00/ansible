@@ -26,6 +26,20 @@
     group: "senso"
     mode: "0644"
 
+- name: Ensure xorg conf exists
+  copy:
+    dest: /etc/X11/xorg.conf.d/99-v3d.conf
+    content: |
+    Section "OutputClass"
+    Identifier "vc4"
+    MatchDriver "vc4"
+    Driver "modesetting"
+    Option "PrimaryGPU" "true"
+    EndSection
+    owner: "root"
+    group: "root"
+    mode: "0644"
+
 - name: Ensure .xinitrc exists
   copy:
     dest: /home/senso/.xinitrc
