@@ -1,4 +1,3 @@
----
 - name: Ensure destination directory exists
   file:
     path: /etc/systemd/system/getty@tty1.service.d
@@ -6,7 +5,7 @@
     owner: root
     group: root
     mode: "0755"
-    
+
 - name: Create override.conf for auto-login
   copy:
     dest: /etc/systemd/system/getty@tty1.service.d/override.conf
@@ -15,6 +14,17 @@
       ExecStart=
       ExecStart=-/sbin/agetty --autologin senso --noclear %I $TERM
   notify: reload_systemd
+
+- name: Ensure .bash_profile exists
+  copy:
+    dest: /home/senso/.bash_profile
+    content: |
+      if [[ -z "$DISPLAY" ]] && [[ $(tty) == /dev/tty1 ]]; then
+          startx
+      fi
+    owner: "senso"
+    group: "senso"
+    mode: "0644"
 
 - name: Ensure xorg conf exists
   copy:
@@ -30,20 +40,6 @@
     group: "root"
     mode: "0644"
 
-- name: Ensure xorg conf exists
-  copy:
-    dest: /etc/X11/xorg.conf.d/99-v3d.conf
-    content: |
-    Section "OutputClass"
-    Identifier "vc4"
-    MatchDriver "vc4"
-    Driver "modesetting"
-    Option "PrimaryGPU" "true"
-    EndSection
-    owner: "root"
-    group: "root"
-    mode: "0644"
-
 - name: Ensure .xinitrc exists
   copy:
     dest: /home/senso/.xinitrc
@@ -52,3 +48,7 @@
     owner: "senso"
     group: "senso"
     mode: "0755"
+
+handlers:
+  - name: reload_systemd
+    command: systemctl daemon-reload
