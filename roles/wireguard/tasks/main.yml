@@ -1,0 +1,36 @@
+---
+    - name: Ensure WireGuard is installed
+      apt:
+        name:
+          - wireguard
+          - wireguard-tools
+        state: present
+        update_cache: yes
+
+    - name: Generate public key
+      shell: "echo {{ wireguard_private_key }} | wg pubkey"
+      register: wireguard_public_key
+
+    - name: Create WireGuard configuration file
+      copy:
+        dest: "/etc/wireguard/wg0.conf"
+        content: |
+          [Interface]
+          PrivateKey = {{ wireguard_private_key) }}
+          Address = {{ wireguard_address }}
+
+          [Peer]
+          PublicKey = GPtmBhArfTevViJ2ZrBVl/ZkIRQxm7LTXfVoXDUzHik=
+          AllowedIPs = "10.6.0.0/16,10.20.39.0/24"
+          Endpoint = 92.52.223.234:1194
+
+        owner: root
+        group: root
+        mode: "0600"
+      notify: restart_wireguard
+
+    - name: Enable and start WireGuard service
+      systemd:
+        name: "wg-quick@wg0"
+        enabled: yes
+        state: started

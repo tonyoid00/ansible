@@ -12,6 +12,14 @@
         state: present
         update_cache: yes
 
+    - name: Ensure /etc/authselect directory exists
+      file:
+        path: /etc/authselect
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
     - name: Configure Kerberos default realm in debconf
       debconf:
         name: krb5-config
