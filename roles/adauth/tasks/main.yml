@@ -25,9 +25,7 @@
       changed_when: false
 
     - name: Join the host to the AD domain
-      command: echo "{{ ad_admin_password }}" | realm join --user={{ ad_admin_user }} {{ ad_domain }}
-      args:
-        executable: /bin/bash
+      shell: echo "{{ ad_admin_password }}" | realm join --user={{ ad_admin_user }} {{ ad_domain }}
       register: join_result
       failed_when: join_result.rc != 0
 
@@ -53,7 +51,7 @@
         state: started
 
     - name: Configure PAM to create home directories automatically
-      command: "authselect select sssd with-mkhomedir --force"
+      shell: "authselect select sssd with-mkhomedir --force"
 
     - name: Restart SSSD service
       systemd:

@@ -7,7 +7,7 @@
   apt: upgrade=dist state=latest
 
 - name: Installing packages
-  apt: name='aptitude,mc,ntp,git,screen,vim,bash-completion,xorg,chromium-browser' state=latest
+  apt: name='aptitude,mc,ntp,git,screen,vim,bash-completion,xorg,chromium-browser,authselect' state=latest
 
 - name: Remove shitz
   apt: name='liblxc1,lxc,dnsmasq,lxcfs,lxc-templates' state=absent purge=yes
