@@ -1,5 +1,5 @@
 ---
-- name: restart_sssd
+- name: restart_wireguard
   systemd:
-    name: sssd
+    name: wg-quick@wg0
     state: restarted
