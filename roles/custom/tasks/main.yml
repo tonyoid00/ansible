@@ -56,11 +56,6 @@
         enabled: false
         state: stopped
 
-    - name: Remove /etc/resolv.conf if it exists
-      file:
-        path: /etc/resolv.conf
-        state: absent
-
     - name: Create a new /etc/resolv.conf
       copy:
         dest: /etc/resolv.conf
