@@ -13,7 +13,7 @@
 
 - name: Set timezone to local
   command: timedatectl set-timezone "{{ timezone }}"
-  when: current_zone.stdout != timezone
+  when: current_zone.stdout != "Etc/UTC"
 
 - name: Check wireguard
   service:
