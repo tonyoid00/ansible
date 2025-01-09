@@ -1,5 +1,5 @@
----    
+---
 - name: restart_wireguard
-      systemd:
-        name: "wg-quick@wg0"
-        state: restarted
+  systemd:
+    name: wg-quick@wg0
+    state: restarted
