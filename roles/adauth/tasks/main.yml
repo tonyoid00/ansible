@@ -59,10 +59,3 @@
       systemd:
         name: sssd
         state: restarted
-
-  handlers:
-    - name: restart_sssd
-      systemd:
-        name: sssd
-        state: restarted
-
