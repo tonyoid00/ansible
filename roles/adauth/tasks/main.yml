@@ -57,3 +57,30 @@
       systemd:
         name: sssd
         state: restarted
+    - name: Configure SSSD to restrict access to a specific AD group
+      blockinfile:
+        path: /etc/sssd/sssd.conf
+        marker: "# {mark} ANSIBLE MANAGED BLOCK FOR ACCESS RESTRICTIONS"
+        block: |
+          access_provider = simple
+          simple_allow_groups = {{ allowed_ad_group }}
+      notify: restart_sssd
+
+    - name: Ensure SSH is configured to use SSSD for access control
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?AuthorizedKeysCommandUser'
+        line: "AuthorizedKeysCommandUser nobody"
+        state: present
+
+    - name: Enable SSH authorization via SSSD
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?UsePAM'
+        line: "UsePAM yes"
+        state: present
+
+    - name: Restart SSH service to apply changes
+      systemd:
+        name: ssh
+        state: restarted
