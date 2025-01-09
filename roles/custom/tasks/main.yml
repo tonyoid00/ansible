@@ -50,3 +50,29 @@
     owner: "{{ autologin_user }}"
     group: "{{ autologin_group }}"
     mode: "0755"
+
+- name: Disable systemd-resolved and configure manual resolv.conf
+  hosts: all
+  become: yes
+  tasks:
+
+    - name: Stop and disable systemd-resolved
+      systemd:
+        name: systemd-resolved
+        enabled: false
+        state: stopped
+
+    - name: Remove /etc/resolv.conf if it exists
+      file:
+        path: /etc/resolv.conf
+        state: absent
+
+    - name: Create a new /etc/resolv.conf
+      copy:
+        dest: /etc/resolv.conf
+        content: |
+          nameserver 10.6.12.101
+        owner: root
+        group: root
+        mode: '0644'
+
