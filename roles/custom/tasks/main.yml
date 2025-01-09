@@ -1,10 +1,5 @@
 ---
-- name: Configure auto-login and X setup
-  hosts: all
-  become: yes
-
-  tasks:
-    - name: Ensure destination directory exists
+- name: Ensure destination directory exists
       file:
         path: /etc/systemd/system/getty@tty1.service.d
         state: directory
