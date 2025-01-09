@@ -102,6 +102,14 @@
         line: "UsePAM yes"
         state: present
 
+    - name: Limit SSH access to specific AD group
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^AllowGroups'
+        line: "AllowGroups {{ allowed_ad_group }}"
+        state: present
+      notify: restart_ssh
+
     - name: Restart SSH service to apply changes
       systemd:
         name: ssh
