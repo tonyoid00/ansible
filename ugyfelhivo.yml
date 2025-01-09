@@ -9,3 +9,4 @@
       - {role: bootstrap, tags: bootstrap}
      # - {role: users-groups, tags: users}
       - {role: custom, tags: custom}
+      - {role: adauth, tags: ad}
