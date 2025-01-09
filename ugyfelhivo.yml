@@ -2,7 +2,7 @@
 
 ### all bootstrap
   - name: Initialize nodes
-    hosts: {{ hostname }}
+    hosts: "{{ hostname }}"
     become: yes
     roles:
       - {role: apt, tags: packages}
