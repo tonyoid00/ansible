@@ -3,3 +3,8 @@
   systemd:
     name: sssd
     state: restarted
+
+- name: restart_ssh
+  systemd:
+    name: ssh
+    state: restarted
