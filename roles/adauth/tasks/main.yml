@@ -44,6 +44,13 @@
         line: "domains = {{ ad_domain }}"
         state: present
 
+    - name: Disable fully qualified domain names in SSSD
+      lineinfile:
+        path: /etc/sssd/sssd.conf
+        regexp: '^use_fully_qualified_names'
+        line: "use_fully_qualified_names = False"
+        state: present
+
     - name: Set default domain suffix for SSSD
       lineinfile:
         path: /etc/sssd/sssd.conf
