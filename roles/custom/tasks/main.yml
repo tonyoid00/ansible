@@ -1,60 +1,59 @@
 ---
-# Fő feladatok
-- name: Ensure destination directory exists
-  file:
-    path: /etc/systemd/system/getty@tty1.service.d
-    state: directory
-    owner: root
-    group: root
-    mode: "0755"
-
-- name: Create override.conf for auto-login
-  copy:
-    dest: /etc/systemd/system/getty@tty1.service.d/override.conf
-    content: |
-      [Service]
-      ExecStart=
-      ExecStart=-/sbin/agetty --autologin {{ autologin_user }} --noclear %I $TERM
-  notify: reload_systemd
-
-- name: Ensure .bash_profile exists
-  copy:
-    dest: /home/{{ autologin_user }}/.bash_profile
-    content: |
-      if [[ -z "$DISPLAY" ]] && [[ $(tty) == /dev/tty1 ]]; then
-          startx
-      fi
-    owner: "{{ autologin_user }}"
-    group: "{{ autologin_group }}"
-    mode: "0644"
-
-- name: Ensure xorg conf exists
-  copy:
-    dest: /etc/X11/xorg.conf.d/99-v3d.conf
-    content: |
-      Section "OutputClass"
-          Identifier "vc4"
-          MatchDriver "vc4"
-          Driver "modesetting"
-          Option "PrimaryGPU" "true"
-      EndSection
-    owner: "root"
-    group: "root"
-    mode: "0644"
-
-- name: Ensure .xinitrc exists
-  copy:
-    dest: /home/{{ autologin_user }}/.xinitrc
-    content: |
-      exec chromium-browser --kiosk --start-fullscreen --noerrdialogs --disable-infobars
-    owner: "{{ autologin_user }}"
-    group: "{{ autologin_group }}"
-    mode: "0755"
-
-- name: Disable systemd-resolved and configure manual resolv.conf
+- name: Configure auto-login and X setup
   hosts: all
   become: yes
+
   tasks:
+    - name: Ensure destination directory exists
+      file:
+        path: /etc/systemd/system/getty@tty1.service.d
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Create override.conf for auto-login
+      copy:
+        dest: /etc/systemd/system/getty@tty1.service.d/override.conf
+        content: |
+          [Service]
+          ExecStart=
+          ExecStart=-/sbin/agetty --autologin {{ autologin_user }} --noclear %I $TERM
+      notify: reload_systemd
+
+    - name: Ensure .bash_profile exists
+      copy:
+        dest: /home/{{ autologin_user }}/.bash_profile
+        content: |
+          if [[ -z "$DISPLAY" ]] && [[ $(tty) == /dev/tty1 ]]; then
+              startx
+          fi
+        owner: "{{ autologin_user }}"
+        group: "{{ autologin_group }}"
+        mode: "0644"
+
+    - name: Ensure xorg conf exists
+      copy:
+        dest: /etc/X11/xorg.conf.d/99-v3d.conf
+        content: |
+          Section "OutputClass"
+              Identifier "vc4"
+              MatchDriver "vc4"
+              Driver "modesetting"
+              Option "PrimaryGPU" "true"
+          EndSection
+        owner: "root"
+        group: "root"
+        mode: "0644"
+
+    - name: Ensure .xinitrc exists
+      copy:
+        dest: /home/{{ autologin_user }}/.xinitrc
+        content: |
+          exec chromium-browser --kiosk --start-fullscreen --noerrdialogs --disable-infobars
+        owner: "{{ autologin_user }}"
+        group: "{{ autologin_group }}"
+        mode: "0755"
 
     - name: Stop and disable systemd-resolved
       systemd:
@@ -75,4 +74,3 @@
         owner: root
         group: root
         mode: '0644'
-
