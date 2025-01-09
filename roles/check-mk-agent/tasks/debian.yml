@@ -1,5 +1,0 @@
----
-
-- name: Install check-mk agent
-  apt: deb=https://monitor.zerotimeservices.com/zts/check_mk/agents/check-mk-agent_{{ omd_version }}-1_all.deb state=present
-

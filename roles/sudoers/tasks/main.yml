@@ -1,9 +1,0 @@
----
-
-- name: Check if sudoers exist
-  stat: path=/etc/sudoers.d/00-sudoers
-  register: sudoers
-
-- name: Add group to sudoers
-  template: src=templates/00-sudoers.j2 dest="/etc/sudoers.d/00-sudoers" mode=0440 owner=root group=root
-  #when: sudoers.stat.exists == false 

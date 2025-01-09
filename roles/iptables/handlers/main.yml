@@ -1,8 +1,0 @@
----
-- name: restart iptables
-  service: name=netfilter-persistent state=restarted
-  notify: restart fail2ban
-
-- name: restart fail2ban
-  service: name=fail2ban state=restarted
-

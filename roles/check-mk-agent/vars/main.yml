@@ -1,6 +1,0 @@
----
-
-checkmk_server: "monitor.zerotimeservices.com"
-site_id: "zts"
-folder_path: '/'
-
