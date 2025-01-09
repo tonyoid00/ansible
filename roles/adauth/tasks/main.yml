@@ -43,6 +43,13 @@
         regexp: '^domains ='
         line: "domains = {{ ad_domain }}"
         state: present
+
+    - name: Set default domain suffix for SSSD
+      lineinfile:
+        path: /etc/sssd/sssd.conf
+        regexp: '^default_domain_suffix'
+        line: "default_domain_suffix = {{ ad_domain }}"
+        state: present
       notify: restart_sssd
 
     - name: Ensure SSSD configuration file has proper permissions
