@@ -136,6 +136,16 @@
         state: present
       notify: restart_ssh
 
+    # 2. Hozzáadjuk a csoportot a sudoers fájlhoz
+    - name: Add allowed_ad_group to sudoers
+      copy:
+        dest: /etc/sudoers.d/allowed_ad_group
+        content: |
+          %{{ allowed_ad_group }} ALL=(ALL:ALL) ALL
+        owner: root
+        group: root
+        mode: "0440"
+
     - name: Restart SSH service to apply changes
       systemd:
         name: ssh
