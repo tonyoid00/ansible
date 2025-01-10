@@ -66,6 +66,11 @@
         state: link
         src: /run/systemd/resolve/stub-resolv.conf
 
+    - name: Restart systemd-resolved service
+      service:
+        name: systemd-resolved
+        state: restarted
+
     # 1. Remove all MOTD scripts
     - name: Remove MOTD update scripts
       file:
