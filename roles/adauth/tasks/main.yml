@@ -71,15 +71,6 @@
         state: present
         line: "session required pam_mkhomedir.so skel=/etc/skel umask=0077"
 
-    # 2. SSSD konfiguráció beállítása
-    - name: Configure SSSD to set home directory path
-      blockinfile:
-        path: /etc/sssd/sssd.conf
-        marker: "# {mark} ANSIBLE MANAGED BLOCK"
-        block: |
-          [domain/your_domain]
-          override_homedir = /home/%u
-
     - name: Validate SSSD configuration
       shell: sssctl config-check
       register: sssctl_check
