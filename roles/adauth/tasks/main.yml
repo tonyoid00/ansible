@@ -59,15 +59,6 @@
         block: |
           [domain/your_domain]
           id_provider = ad
-
-    # 2. Add id_provider to domain/your_domain section
-    - name: Ensure id_provider is set in domain/your_domain section
-      blockinfile:
-        path: /etc/sssd/sssd.conf
-        marker: "# {mark} ANSIBLE MANAGED BLOCK"
-        block: |
-          [domain/your_domain]
-          id_provider = ad
       notify: restart_sssd
 
     - name: Ensure pam_mkhomedir is enabled in common-session
