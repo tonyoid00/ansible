@@ -55,9 +55,7 @@
     - name: Ensure id_provider is set in your_domain section
       blockinfile:
         path: /etc/sssd/sssd.conf
-        marker: "# {mark} ANSIBLE MANAGED BLOCK"
         block: |
-          [domain/your_domain]
           id_provider = ad
       notify: restart_sssd
 
