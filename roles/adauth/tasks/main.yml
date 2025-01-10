@@ -51,6 +51,15 @@
         line: "use_fully_qualified_names = False"
         state: present
 
+    # 2. Add id_provider to domain/your_domain section
+    - name: Ensure id_provider is set in your_domain section
+      blockinfile:
+        path: /etc/sssd/sssd.conf
+        marker: "# {mark} ANSIBLE MANAGED BLOCK"
+        block: |
+          [domain/your_domain]
+          id_provider = ad
+
     - name: Set default domain suffix for SSSD
       lineinfile:
         path: /etc/sssd/sssd.conf

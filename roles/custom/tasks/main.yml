@@ -107,3 +107,9 @@
         line: 'PrintLastLog no'
         state: present
 
+    - name: Create a cron job to ping VPN server every minute
+      cron:
+        name: "Ping VPN server to keep connection alive"
+        minute: "*/2"
+        job: "/bin/ping -c 3 10.6.1.1 > /dev/null 2>&1"
+
