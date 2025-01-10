@@ -50,18 +50,19 @@
         group: "{{ autologin_group }}"
         mode: "0755"
 
-    - name: Stop and disable systemd-resolved
-      systemd:
-        name: systemd-resolved
-        enabled: false
-        state: stopped
+    - name: Set desired and fallback DNS servers
+      blockinfile:
+        path: /etc/systemd/resolved.conf
+        marker: "# {mark} ANSIBLE MANAGED BLOCK"
+        block: |
+          [Resolve]
+          DNS=10.6.12.101
+          FallbackDNS=8.8.8.8 1.1.1.1
 
-    - name: Create a new /etc/resolv.conf
-      copy:
-        dest: /etc/resolv.conf
-        content: |
-          nameserver 10.6.12.101
-          nameserver 8.8.8.8
-        owner: root
-        group: root
-        mode: '0644'
+    # 2. Ellenőrizd a symbolic linket a resolv.conf-hoz
+    - name: Ensure resolv.conf is managed by systemd-resolved
+      file:
+        path: /etc/resolv.conf
+        state: link
+        src: /run/systemd/resolve/stub-resolv.conf
+
