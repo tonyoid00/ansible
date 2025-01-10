@@ -60,12 +60,14 @@
           [domain/your_domain]
           id_provider = ad
 
-    - name: Set default domain suffix for SSSD
-      lineinfile:
+    # 2. Add id_provider to domain/your_domain section
+    - name: Ensure id_provider is set in domain/your_domain section
+      blockinfile:
         path: /etc/sssd/sssd.conf
-        regexp: '^default_domain_suffix'
-        line: "default_domain_suffix = {{ ad_domain }}"
-        state: present
+        marker: "# {mark} ANSIBLE MANAGED BLOCK"
+        block: |
+          [domain/your_domain]
+          id_provider = ad
       notify: restart_sssd
 
     - name: Ensure pam_mkhomedir is enabled in common-session
