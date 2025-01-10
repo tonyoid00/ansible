@@ -59,6 +59,32 @@
         state: present
       notify: restart_sssd
 
+    - name: Ensure pam_mkhomedir is enabled in common-session
+      lineinfile:
+        path: /etc/pam.d/common-session
+        state: present
+        line: "session required pam_mkhomedir.so skel=/etc/skel umask=0077"
+
+    - name: Ensure pam_mkhomedir is enabled in common-session-noninteractive
+      lineinfile:
+        path: /etc/pam.d/common-session-noninteractive
+        state: present
+        line: "session required pam_mkhomedir.so skel=/etc/skel umask=0077"
+
+    # 2. SSSD konfiguráció beállítása
+    - name: Configure SSSD to set home directory path
+      blockinfile:
+        path: /etc/sssd/sssd.conf
+        marker: "# {mark} ANSIBLE MANAGED BLOCK"
+        block: |
+          [domain/your_domain]
+          override_homedir = /home/%u
+
+    - name: Validate SSSD configuration
+      shell: sssctl config-check
+      register: sssctl_check
+      failed_when: "'SUCCESS' not in sssctl_check.stdout"
+
     - name: Ensure SSSD configuration file has proper permissions
       file:
         path: /etc/sssd/sssd.conf
