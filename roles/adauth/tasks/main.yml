@@ -72,9 +72,10 @@
         line: "session required pam_mkhomedir.so skel=/etc/skel umask=0077"
 
     - name: Validate SSSD configuration
-      shell: sssctl config-check
-      register: sssctl_check
-      failed_when: "'SUCCESS' not in sssctl_check.stdout"
+      command: sssctl config-check
+      register: sssd_config_check
+      failed_when: "'Issues identified by validators: 0' not in sssd_config_check.stdout"
+
 
     - name: Ensure SSSD configuration file has proper permissions
       file:
