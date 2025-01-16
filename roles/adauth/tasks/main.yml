@@ -52,17 +52,14 @@
         state: present
 
     # 2. Add id_provider to domain/your_domain section
-    - name: Ensure id_provider is set in your_domain section
+    - name: add some stuff to sssd conf
       blockinfile:
         path: /etc/sssd/sssd.conf
         block: |
           id_provider = ad
-      notify: restart_sssd
-
-    - name: Add LDAP attributes and tokengroups to SSSD configuration
-      blockinfile:
-        path: /etc/sssd/sssd.conf
-        block: |
+          access_provider = ad
+          auth_provider = ad
+          simple_allow_groups = {{ allowed_ad_group }}
           ldap_user_extra_attrs = altSecurityIdentities:altSecurityIdentities
           ldap_user_ssh_public_key = altSecurityIdentities
           ldap_use_tokengroups = True
@@ -107,18 +104,10 @@
         name: sssd
         state: restarted
 
-    - name: Configure SSSD to restrict access to a specific AD group
-      blockinfile:
-        path: /etc/sssd/sssd.conf
-        marker: "# {mark} ANSIBLE MANAGED BLOCK FOR ACCESS RESTRICTIONS"
-        block: |
-          access_provider = simple
-          simple_allow_groups = {{ allowed_ad_group }}
-      notify: restart_sssd
 
     - name: Configure SSH to use SSSD for public key authentication
       lineinfile:
-        path: /etc/ssh/sshd_config
+        path: /etc/ssh/shd_config
         regexp: '^#?AuthorizedKeysCommand'
         line: "AuthorizedKeysCommand /usr/bin/sss_ssh_authorizedkeys %u"
         state: present
