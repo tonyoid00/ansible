@@ -59,6 +59,15 @@
           id_provider = ad
       notify: restart_sssd
 
+    - name: Add LDAP attributes and tokengroups to SSSD configuration
+      blockinfile:
+        path: /etc/sssd/sssd.conf
+        block: |
+          ldap_user_extra_attrs = altSecurityIdentities:altSecurityIdentities
+          ldap_user_ssh_public_key = altSecurityIdentities
+          ldap_use_tokengroups = True
+      notify: restart_sssd
+
     - name: Ensure pam_mkhomedir is enabled in common-session
       lineinfile:
         path: /etc/pam.d/common-session
@@ -97,6 +106,7 @@
       systemd:
         name: sssd
         state: restarted
+
     - name: Configure SSSD to restrict access to a specific AD group
       blockinfile:
         path: /etc/sssd/sssd.conf
@@ -105,6 +115,13 @@
           access_provider = simple
           simple_allow_groups = {{ allowed_ad_group }}
       notify: restart_sssd
+
+    - name: Configure SSH to use SSSD for public key authentication
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?AuthorizedKeysCommand'
+        line: "AuthorizedKeysCommand /usr/bin/sss_ssh_authorizedkeys %u"
+        state: present
 
     - name: Ensure SSH is configured to use SSSD for access control
       lineinfile:
