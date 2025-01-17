@@ -126,6 +126,20 @@
         line: "UsePAM yes"
         state: present
 
+    - name: Enable SSH public key authentication
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PubkeyAuthentication'
+        line: "PubkeyAuthentication yes"
+        state: present
+
+    - name: Enable SSH password authentication
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PasswordAuthentication'
+        line: "PasswordAuthentication yes"
+        state: present
+
     - name: Limit SSH access to specific AD group
       lineinfile:
         path: /etc/ssh/sshd_config
