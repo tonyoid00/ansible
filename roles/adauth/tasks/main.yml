@@ -107,14 +107,14 @@
 
     - name: Configure SSH to use SSSD for public key authentication
       lineinfile:
-        path: /etc/ssh/shd_config
+        path: /etc/ssh/sshd_config
         regexp: '^#?AuthorizedKeysCommand'
         line: "AuthorizedKeysCommand /usr/bin/sss_ssh_authorizedkeys %u"
         state: present
 
     - name: Ensure SSH is configured to use SSSD for access control
       lineinfile:
-        path: /etc/ssh/sshd_config
+        path: /etc/ssh/ssshd_config
         regexp: '^#?AuthorizedKeysCommandUser'
         line: "AuthorizedKeysCommandUser nobody"
         state: present
