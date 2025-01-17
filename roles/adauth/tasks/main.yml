@@ -114,7 +114,7 @@
 
     - name: Ensure SSH is configured to use SSSD for access control
       lineinfile:
-        path: /etc/ssh/ssshd_config
+        path: /etc/ssh/sshd_config
         regexp: '^#?AuthorizedKeysCommandUser'
         line: "AuthorizedKeysCommandUser nobody"
         state: present
