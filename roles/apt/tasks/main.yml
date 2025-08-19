@@ -1,5 +1,11 @@
 ---
 
+- name: Add custom Sensomedia repo
+  apt_repository:
+    repo: "deb [trusted=yes] https://apt.sensomedia.hu ./"
+    state: present
+    filename: sensomedia
+
 - name: APT update
   apt: update_cache=yes cache_valid_time=3600
 
@@ -7,7 +13,7 @@
   apt: upgrade=dist state=latest
 
 - name: Installing packages
-  apt: name='aptitude,mc,ntp,git,tmux,screen,vim,bash-completion,xorg,chromium-browser,authselect,net-tools,wireguard,plymouth,plymouth-themes,pulseaudio,pulseaudio-utils,alsa-utils' state=latest
+  apt: name='aptitude,mc,ntp,chrony,git,tmux,screen,vim,bash-completion,xorg,chromium-browser,authselect,net-tools,wireguard,plymouth,plymouth-themes,pulseaudio,pulseaudio-utils,alsa-utils' state=latest
 
 - name: Remove shitz
   apt: name='liblxc1,lxc,dnsmasq,lxcfs,lxc-templates' state=absent purge=yes
