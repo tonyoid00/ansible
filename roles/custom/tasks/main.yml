@@ -47,6 +47,14 @@
       copy:
         dest: /home/{{ autologin_user }}/.xinitrc
         content: |
+          #!/bin/bash
+
+          xset -dpms; xset s off
+          cmd="xrandr --output HDMI-1 --rotate left"
+          `$cmd`
+          cmd="xrandr --output HDMI-2 --rotate left"
+          echo $cmd
+          `$cmd`
           exec chromium-browser --kiosk --start-fullscreen --noerrdialogs --disable-infobars
         owner: "{{ autologin_user }}"
         group: "{{ autologin_group }}"
