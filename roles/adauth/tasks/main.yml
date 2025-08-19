@@ -44,6 +44,13 @@
         line: "domains = {{ ad_domain }}"
         state: present
 
+    - name: Configure SSSD to use AD for authentication
+      lineinfile:
+        path: /etc/sssd/sssd.conf
+        regexp: '^services ='
+        line: "services = "
+        state: present
+
     - name: Disable fully qualified domain names in SSSD
       lineinfile:
         path: /etc/sssd/sssd.conf
