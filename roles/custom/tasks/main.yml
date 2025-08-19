@@ -20,7 +20,9 @@
       copy:
         dest: /home/{{ autologin_user }}/.bash_profile
         content: |
-          if [[ -z "$DISPLAY" ]] && [[ $(tty) == /dev/tty1 ]]; then
+          if shopt -q login_shell; then
+             [[ -f ~/.bashrc ]] && source ~/.bashrc
+             [[ -z "$DISPLAY" ]] && [[ $(tty) == /dev/tty1 ]]; then
               startx
           fi
         owner: "{{ autologin_user }}"
