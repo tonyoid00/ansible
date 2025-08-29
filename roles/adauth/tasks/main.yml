@@ -164,6 +164,13 @@
         owner: root
         group: root
         mode: "0440"
+        
+    # hosts bejegyzes h ne akadjon a login
+    - name: Sor hozzáadása az /etc/hosts fájlhoz
+      lineinfile:
+        path: /etc/hosts
+        line: "10.20.39.10 dc1.sensomedia.corp dc1"
+        state: present
 
     - name: Restart SSH service to apply changes
       systemd:
