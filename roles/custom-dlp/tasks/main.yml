@@ -57,7 +57,7 @@
 - name: infopult client.ini set
   copy:
     dest: /senso/bin/NeoInfopultWebservice/client.ini
-    content: "{{ client.ini }}"
+    content: "{{ client_ini }}"
 
 - name: Ensure xorg conf exists
   copy:
