@@ -8,6 +8,6 @@
       - {role: apt-dlpinfopult, tags: packages}
       - {role: bootstrap, tags: bootstrap}
       - {role: custom-dlp, tags: custom}
-      - {role: timem, tags: time}
+      - {role: time, tags: time}
       - {role: wireguard, tags: wg}
       - {role: adauth, tags: ad}
