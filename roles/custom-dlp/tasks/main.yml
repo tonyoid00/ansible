@@ -50,6 +50,19 @@
         group: "{{ autologin_group }}"
         mode: "0644"
 
+    - name: infopult.ini set
+      copy:
+        dest: /senso/bin/NeoInfopult/config/infopult.ini
+        content: |
+		videoOnly=true
+		videoPlayerWidth=1080
+		videoPlayerHeight=1920	
+
+    - name: infopult client.ini set
+      copy:
+        dest: /senso/bin/NeoInfopultWebservice/client.ini
+        content: |
+		x
     - name: Ensure xorg conf exists
       copy:
         dest: /etc/X11/xorg.conf.d/99-v3d.conf

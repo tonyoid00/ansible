@@ -1,0 +1,13 @@
+---
+
+### all bootstrap
+  - name: Initialize nodes
+    hosts: "{{ hostname }}"
+    become: yes
+    roles:
+      - {role: apt-dlpinfopult, tags: packages}
+      - {role: bootstrap, tags: bootstrap}
+      - {role: custom-dlp, tags: custom}
+      - {role: timem, tags: time}
+      - {role: wireguard, tags: wg}
+      - {role: adauth, tags: ad}
