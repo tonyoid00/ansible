@@ -20,35 +20,36 @@
       copy:
         dest: /home/{{ autologin_user }}/.bash_profile
         content: |
-		connectedOutputs=xrandr | awk '{print $1" "$2}' | grep " connected" | awk '{print $1}'
+          connectedOutputs=xrandr | awk '{print $1" "$2}' | grep " connected" | awk '{print $1}'
 
-		for i in $(echo $connectedOutputs | tr " " "\n")
-			do
-    		cmd="xrandr --output "$i" --mode 1920x1080"
-    		echo $cmd
-    		$cmd
-    		cmd="xrandr --output "$i" --rotate right"
-    		echo $cmd
-    		$cmd
-		done
+          for i in $(echo $connectedOutputs | tr " " "\n")
+          do
+              cmd="xrandr --output $i --mode 1920x1080"
+              echo $cmd
+              $cmd
+              cmd="xrandr --output $i --rotate right"
+              echo $cmd
+              $cmd
+          done
 
-		jack_control start
+          jack_control start
 
-		#bash /senso/install/calibrateDLP.sh
+          #bash /senso/install/calibrateDLP.sh
 
-		/home/senso/calibrateMagic.sh
+          /home/senso/calibrateMagic.sh
 
-		/usr/share/touchfoildriver-LMA9/ViPstartdrv.sh &
-		setxkbmap hu
+          /usr/share/touchfoildriver-LMA9/ViPstartdrv.sh &
+          setxkbmap hu
 
-		/home/senso/screenRun.sh /senso/bin/NeoInfopultWebservice/NeoInfopultWebService &
-		/home/senso/screenRun.sh /senso/bin/AdvertLogger.py &
+          /home/senso/screenRun.sh /senso/bin/NeoInfopultWebservice/NeoInfopultWebService &
+          /home/senso/screenRun.sh /senso/bin/AdvertLogger.py &
 
-		/senso/bin/NeoInfopult/NeoInfopult	
-
+          /senso/bin/NeoInfopult/NeoInfopult
         owner: "{{ autologin_user }}"
         group: "{{ autologin_group }}"
         mode: "0644"
+
+
 
     - name: infopult.ini set
       copy:
