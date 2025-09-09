@@ -20,12 +20,35 @@
       copy:
         dest: /home/{{ autologin_user }}/.bash_profile
         content: |
-          if shopt -q login_shell; then
-             [[ -f ~/.bashrc ]] && source ~/.bashrc
-             [[ -z "$DISPLAY" ]] && [[ $(tty) == /dev/tty1 ]] && exec startx
-          else
-             exit 1 
-          fi
+		connectedOutputs=xrandr | awk '{print $1" "$2}' | grep " connected" | awk '{print $1}'
+
+		for i in $(echo $connectedOutputs | tr " " "\n")
+			do
+    		cmd="xrandr --output "$i" --mode 1920x1080"
+    		echo $cmd
+    		$cmd
+    		cmd="xrandr --output "$i" --rotate right"
+    		echo $cmd
+    		$cmd
+		done
+
+		jack_control start
+
+		#bash /senso/install/calibrateDLP.sh
+
+		/home/senso/calibrateMagic.sh
+
+		/usr/share/touchfoildriver-LMA9/ViPstartdrv.sh &
+		setxkbmap hu
+
+		#/home/senso/setTouchFoil.sh
+
+
+		/home/senso/screenRun.sh /senso/bin/NeoInfopultWebservice/NeoInfopultWebService &
+		/home/senso/screenRun.sh /senso/bin/AdvertLogger.py &
+
+		/senso/bin/NeoInfopult/NeoInfopult	
+
         owner: "{{ autologin_user }}"
         group: "{{ autologin_group }}"
         mode: "0644"
