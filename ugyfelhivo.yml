@@ -8,7 +8,7 @@
       - {role: apt-ugyfelhivo, tags: packages}
       - {role: bootstrap, tags: bootstrap}
      # - {role: users-groups, tags: users}
-      - {role: custom, tags: custom}
-      - {role: custom, tags: time}
+      - {role: custom-ugyfelhivo, tags: custom}
+      - {role: time, tags: time}
       - {role: wireguard, tags: wg}
       - {role: adauth, tags: ad}
