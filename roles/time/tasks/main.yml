@@ -1,0 +1,29 @@
+- name: Chrony NTP szerver telepítés és beállítás
+  become: yes
+
+  tasks:
+    - name: Chrony telepítése
+      package:
+        name: chrony
+        state: present
+
+    - name: Chrony konfiguráció bemásolása
+      copy:
+        dest: /etc/chrony/chrony.conf
+        content: |
+          server {{ ntp_server }} iburst
+
+          local stratum 10
+          driftfile /var/lib/chrony/chrony.drift
+          logdir /var/log/chrony
+          makestep 1.0 3
+
+      notify:
+        - restart chrony
+
+  handlers:
+    - name: restart chrony
+      service:
+        name: chronyd
+        state: restarted
+        enabled: yes
