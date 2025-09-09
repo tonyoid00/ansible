@@ -1,20 +1,19 @@
----
-    - name: Ensure destination directory exists
-      file:
-        path: /etc/systemd/system/getty@tty1.service.d
-        state: directory
-        owner: root
-        group: root
-        mode: "0755"
+- name: Ensure destination directory exists
+  file:
+    path: /etc/systemd/system/getty@tty1.service.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
 
-    - name: Create override.conf for auto-login
-      copy:
-        dest: /etc/systemd/system/getty@tty1.service.d/override.conf
-        content: |
-          [Service]
-          ExecStart=
-          ExecStart=-/sbin/agetty --autologin {{ autologin_user }} --noclear %I $TERM
-      notify: reload_systemd
+- name: Create override.conf for auto-login
+  copy:
+    dest: /etc/systemd/system/getty@tty1.service.d/override.conf
+    content: |
+      [Service]
+      ExecStart=
+      ExecStart=-/sbin/agetty --autologin {{ autologin_user }} --noclear %I $TERM
+  notify: reload_systemd
 
 - name: Ensure .xinitrc exists
   copy:
@@ -35,6 +34,7 @@
       jack_control start
 
       /home/senso/calibrateMagic.sh
+
       /usr/share/touchfoildriver-LMA9/ViPstartdrv.sh &
       setxkbmap hu
 
