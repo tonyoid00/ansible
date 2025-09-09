@@ -1,4 +1,5 @@
 - name: Chrony NTP szerver telepítés és beállítás
+  hosts: all
   become: yes
 
   tasks:

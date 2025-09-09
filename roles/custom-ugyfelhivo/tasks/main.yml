@@ -22,7 +22,7 @@
         content: |
           if shopt -q login_shell; then
              [[ -f ~/.bashrc ]] && source ~/.bashrc
-             [[ -z "$DISPLAY" ]] && [[ $(tty) == /dev/tty1 ]] && exec startx
+             [[ -z "$DISPLAY" ]] && [[ $(tty) == /dev/tty1 ]] && exec startx -- -nocursor
           else
              exit 1 
           fi
