@@ -41,9 +41,6 @@
 		/usr/share/touchfoildriver-LMA9/ViPstartdrv.sh &
 		setxkbmap hu
 
-		#/home/senso/setTouchFoil.sh
-
-
 		/home/senso/screenRun.sh /senso/bin/NeoInfopultWebservice/NeoInfopultWebService &
 		/home/senso/screenRun.sh /senso/bin/AdvertLogger.py &
 
