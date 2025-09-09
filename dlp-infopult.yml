@@ -5,9 +5,8 @@
     hosts: "{{ hostname }}"
     become: yes
     roles:
-      - {role: apt-ugyfelhivo, tags: packages}
+      - {role: apt, tags: packages}
       - {role: bootstrap, tags: bootstrap}
-     # - {role: users-groups, tags: users}
       - {role: custom, tags: custom}
       - {role: custom, tags: time}
       - {role: wireguard, tags: wg}
