@@ -62,7 +62,7 @@
       copy:
         dest: /senso/bin/NeoInfopultWebservice/client.ini
         content: |
-		x
+		"{{ client.ini }}"
     - name: Ensure xorg conf exists
       copy:
         dest: /etc/X11/xorg.conf.d/99-v3d.conf
