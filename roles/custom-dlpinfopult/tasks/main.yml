@@ -19,29 +19,7 @@
   copy:
     dest: /home/{{ autologin_user }}/.xinitrc
     content: |
-      connectedOutputs=xrandr | awk '{print $1" "$2}' | grep " connected" | awk '{print $1}'
-
-      for i in $(echo $connectedOutputs | tr " " "\n")
-      do
-        cmd="xrandr --output $i --mode 1920x1080"
-        echo $cmd
-        $cmd
-        cmd="xrandr --output $i --rotate right"
-        echo $cmd
-        $cmd
-      done
-
-      jack_control start
-
-      /home/senso/calibrateMagic.sh
-
-      /usr/share/touchfoildriver-LMA9/ViPstartdrv.sh &
-      setxkbmap hu
-
-      /home/senso/screenRun.sh /senso/bin/NeoInfopultWebservice/NeoInfopultWebService &
-      /home/senso/screenRun.sh /senso/bin/AdvertLogger.py &
-
-      /senso/bin/NeoInfopult/NeoInfopult
+            {{ xinitrc }}
     owner: "{{ autologin_user }}"
     group: "{{ autologin_group }}"
     mode: "0644"
@@ -50,14 +28,13 @@
   copy:
     dest: /senso/bin/NeoInfopult/config/infopult.ini
     content: |
-      videoOnly=true
-      videoPlayerWidth=1080
-      videoPlayerHeight=1920
+            {{ infopult_ini }}
 
 - name: infopult client.ini set
   copy:
     dest: /senso/bin/NeoInfopultWebservice/client.ini
-    content: "{{ client_ini }}"
+    content: |
+            {{ client_ini }}
 
 - name: Ensure xorg conf exists
   copy:
