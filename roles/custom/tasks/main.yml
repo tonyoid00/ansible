@@ -20,8 +20,11 @@
       copy:
         dest: /home/{{ autologin_user }}/.bash_profile
         content: |
-          if [[ -z "$DISPLAY" ]] && [[ $(tty) == /dev/tty1 ]]; then
-              startx
+          if shopt -q login_shell; then
+             [[ -f ~/.bashrc ]] && source ~/.bashrc
+             [[ -z "$DISPLAY" ]] && [[ $(tty) == /dev/tty1 ]] && exec startx
+          else
+             exit 1 
           fi
         owner: "{{ autologin_user }}"
         group: "{{ autologin_group }}"
@@ -45,23 +48,79 @@
       copy:
         dest: /home/{{ autologin_user }}/.xinitrc
         content: |
+          #!/bin/bash
+
+          xset -dpms; xset s off
+          cmd="xrandr --output HDMI-1 --rotate left"
+          `$cmd`
+          cmd="xrandr --output HDMI-2 --rotate left"
+          echo $cmd
+          `$cmd`
           exec chromium-browser --kiosk --start-fullscreen --noerrdialogs --disable-infobars
         owner: "{{ autologin_user }}"
         group: "{{ autologin_group }}"
         mode: "0755"
 
-    - name: Stop and disable systemd-resolved
-      systemd:
-        name: systemd-resolved
-        enabled: false
-        state: stopped
+    - name: Set desired and fallback DNS servers
+      blockinfile:
+        path: /etc/systemd/resolved.conf
+        marker: "# {mark} ANSIBLE MANAGED BLOCK"
+        block: |
+          [Resolve]
+          DNS=10.6.12.101
+          FallbackDNS=8.8.8.8 1.1.1.1
 
-    - name: Create a new /etc/resolv.conf
-      copy:
-        dest: /etc/resolv.conf
-        content: |
-          nameserver 10.6.12.101
-          nameserver 8.8.8.8
-        owner: root
-        group: root
-        mode: '0644'
+    # 2. Ellenőrizd a symbolic linket a resolv.conf-hoz
+    - name: Ensure resolv.conf is managed by systemd-resolved
+      file:
+        path: /etc/resolv.conf
+        state: link
+        src: /run/systemd/resolve/stub-resolv.conf
+
+    - name: Restart systemd-resolved service
+      service:
+        name: systemd-resolved
+        state: restarted
+
+    # 1. Remove all MOTD scripts
+    - name: Remove MOTD update scripts
+      file:
+        path: /etc/update-motd.d/
+        state: absent
+
+    # 2. Disable MOTD in PAM configuration
+    - name: Comment out pam_motd.so in common-session
+      lineinfile:
+        path: /etc/pam.d/common-session
+        regexp: '^session\s+optional\s+pam_motd.so.*'
+        state: absent
+        backrefs: yes
+
+    - name: Comment out pam_motd.so in common-session-noninteractive
+      lineinfile:
+        path: /etc/pam.d/common-session-noninteractive
+        regexp: '^session\s+optional\s+pam_motd.so.*'
+        state: absent
+        backrefs: yes
+
+    # 3. Disable dynamic MOTD updates
+    - name: Disable dynamic MOTD updates in SSHD
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PrintMotd\s+yes'
+        line: 'PrintMotd no'
+        state: present
+
+    - name: Ensure PrintLastLog is disabled
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PrintLastLog\s+yes'
+        line: 'PrintLastLog no'
+        state: present
+
+    - name: Create a cron job to ping VPN server every minute
+      cron:
+        name: "Ping VPN server to keep connection alive"
+        minute: "*/2"
+        job: "/bin/ping -c 3 10.6.1.1 > /dev/null 2>&1"
+

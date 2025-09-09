@@ -44,6 +44,13 @@
         line: "domains = {{ ad_domain }}"
         state: present
 
+    - name: Configure SSSD to use AD for authentication
+      lineinfile:
+        path: /etc/sssd/sssd.conf
+        regexp: '^services ='
+        line: "services = "
+        state: present
+
     - name: Disable fully qualified domain names in SSSD
       lineinfile:
         path: /etc/sssd/sssd.conf
@@ -51,13 +58,37 @@
         line: "use_fully_qualified_names = False"
         state: present
 
-    - name: Set default domain suffix for SSSD
-      lineinfile:
+    # 2. Add id_provider to domain/your_domain section
+    - name: add some stuff to sssd conf
+      blockinfile:
         path: /etc/sssd/sssd.conf
-        regexp: '^default_domain_suffix'
-        line: "default_domain_suffix = {{ ad_domain }}"
-        state: present
+        block: |
+          id_provider = ad
+          access_provider = ad
+          auth_provider = ad
+          simple_allow_groups = {{ allowed_ad_group }}
+          ldap_user_extra_attrs = altSecurityIdentities:altSecurityIdentities
+          ldap_user_ssh_public_key = altSecurityIdentities
+          ldap_use_tokengroups = True
       notify: restart_sssd
+
+    - name: Ensure pam_mkhomedir is enabled in common-session
+      lineinfile:
+        path: /etc/pam.d/common-session
+        state: present
+        line: "session required pam_mkhomedir.so skel=/etc/skel umask=0077"
+
+    - name: Ensure pam_mkhomedir is enabled in common-session-noninteractive
+      lineinfile:
+        path: /etc/pam.d/common-session-noninteractive
+        state: present
+        line: "session required pam_mkhomedir.so skel=/etc/skel umask=0077"
+
+    - name: Validate SSSD configuration
+      command: sssctl config-check
+      register: sssd_config_check
+      failed_when: "'Issues identified by validators: 0' not in sssd_config_check.stdout"
+
 
     - name: Ensure SSSD configuration file has proper permissions
       file:
@@ -79,14 +110,14 @@
       systemd:
         name: sssd
         state: restarted
-    - name: Configure SSSD to restrict access to a specific AD group
-      blockinfile:
-        path: /etc/sssd/sssd.conf
-        marker: "# {mark} ANSIBLE MANAGED BLOCK FOR ACCESS RESTRICTIONS"
-        block: |
-          access_provider = simple
-          simple_allow_groups = {{ allowed_ad_group }}
-      notify: restart_sssd
+
+
+    - name: Configure SSH to use SSSD for public key authentication
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?AuthorizedKeysCommand'
+        line: "AuthorizedKeysCommand /usr/bin/sss_ssh_authorizedkeys %u"
+        state: present
 
     - name: Ensure SSH is configured to use SSSD for access control
       lineinfile:
@@ -102,6 +133,20 @@
         line: "UsePAM yes"
         state: present
 
+    - name: Enable SSH public key authentication
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PubkeyAuthentication'
+        line: "PubkeyAuthentication yes"
+        state: present
+
+    - name: Enable SSH password authentication
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PasswordAuthentication'
+        line: "PasswordAuthentication yes"
+        state: present
+
     - name: Limit SSH access to specific AD group
       lineinfile:
         path: /etc/ssh/sshd_config
@@ -109,6 +154,23 @@
         line: "AllowGroups {{ allowed_ad_group }}"
         state: present
       notify: restart_ssh
+
+    # 2. Hozzáadjuk a csoportot a sudoers fájlhoz
+    - name: Add allowed_ad_group to sudoers
+      copy:
+        dest: /etc/sudoers.d/allowed_ad_group
+        content: |
+          %{{ allowed_ad_group }} ALL=(ALL:ALL) ALL
+        owner: root
+        group: root
+        mode: "0440"
+        
+    # hosts bejegyzes h ne akadjon a login
+    - name: Sor hozzáadása az /etc/hosts fájlhoz
+      lineinfile:
+        path: /etc/hosts
+        line: "10.20.39.10 dc1.sensomedia.corp dc1"
+        state: present
 
     - name: Restart SSH service to apply changes
       systemd:
