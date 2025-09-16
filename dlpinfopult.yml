@@ -5,9 +5,9 @@
     hosts: "{{ hostname }}"
     become: yes
     roles:
+      - {role: wireguard, tags: wg}
       - {role: apt-dlpinfopult, tags: packages}
       - {role: bootstrap, tags: bootstrap}
       - {role: custom-dlpinfopult, tags: custom}
       - {role: time, tags: time}
-      - {role: wireguard, tags: wg}
       - {role: adauth, tags: ad}
