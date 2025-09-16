@@ -2,7 +2,7 @@
 
 - name: Add custom Sensomedia repo
   apt_repository:
-    repo: "deb [trusted=yes] https://apt.sensomedia.hu ./"
+    repo: "deb [trusted=yes] https://apt.sensomedia.hu stable main"
     state: present
     filename: sensomedia
 
