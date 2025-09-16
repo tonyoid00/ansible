@@ -13,7 +13,7 @@
   apt: upgrade=dist state=latest
 
 - name: Installing packages
-  apt: name='chrony,libminizip1t64,libsnappy1v5,libxcb-cursor0,libevent-2.1-7t64,libxcb-icccm4,libxcb-keysyms1,libxcb-xkb1,libxkbcommon0,libxkbcommon-x11-0,x11vnc,screen,wpasupplicant,aptitude,mc,chrony,git,tmux,screen,vim,bash-completion,xorg,chromium-browser,authselect,net-tools,wireguard,plymouth,plymouth-themes,pulseaudio,pulseaudio-utils,alsa-utils,customerprinter' state=latest
+  apt: name='chrony,libminizip1t64,libsnappy1v5,libxcb-cursor0,libevent-2.1-7t64,libxcb-icccm4,libxcb-keysyms1,libxcb-xkb1,libxkbcommon0,libxkbcommon-x11-0,x11vnc,screen,wpasupplicant,aptitude,mc,chrony,git,tmux,screen,vim,bash-completion,xorg,chromium-browser,authselect,net-tools,wireguard,plymouth,plymouth-themes,pulseaudio,pulseaudio-utils,alsa-utils,customerprinter,screenrun' state=latest
 
 - name: Remove shitz
   apt: name='liblxc1,lxc,dnsmasq,lxcfs,lxc-templates' state=absent purge=yes
